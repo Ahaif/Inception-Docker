@@ -1,6 +1,5 @@
 FROM  alpine:3.12.0
 
-
 # Update System and Install Tools
 RUN apk update
 RUN apk add nginx openrc vim openssl
