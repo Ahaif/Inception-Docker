@@ -4,6 +4,8 @@ services:
     build: requirements/nginx/
     image: nginx
     container_name: nginx
+    volumes:
+      - www-data:/var/www/html/wordpress
     env_file:
       - .env
     ports:
@@ -11,11 +13,11 @@ services:
     restart: always
 
 
-  volumes:
+volumes:
   www-data:
     driver_opts:
       type: none
-      device: /home/ahaifoul/data/www-data
+      device: /home/ahaifoul42/data/www-data
       o: bind
 
   
