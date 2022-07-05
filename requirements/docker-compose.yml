@@ -1,0 +1,21 @@
+version: '3'
+services:
+  nginx:
+    build: requirements/nginx/
+    image: nginx
+    container_name: nginx
+    env_file:
+      - .env
+    ports:
+      - 443:443
+    restart: always
+
+
+  volumes:
+  www-data:
+    driver_opts:
+      type: none
+      device: /home/ahaifoul/data/www-data
+      o: bind
+
+  
