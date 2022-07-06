@@ -10,14 +10,25 @@ services:
       - .env
     ports:
       - 443:443
+    depends_on:
+      - wordpress
     restart: always
+  wordpress:
+    build: requirements/wordpress/
+    image: wordpress
+    volumes:
+      - www-data:/var/www/html/wordpress
+    container_name: wordpress
+    restart: always
+    env_file:
+      - .env
 
 
 volumes:
   www-data:
     driver_opts:
       type: none
-      device: /home/ahaifoul42/data/www-data
+      device: /home/ahaifoul/data/www-data
       o: bind
 
   
