@@ -18,12 +18,12 @@
  * @package WordPress
  */
 
-define('NONCE_SALT', 'DarkSide77');
+define('NONCE_SALT', 'abdel');
 
 define('WP_CACHE', true);
 
 define('WP_REDIS_HOST', 'redis');
-define('WP_CACHE_KEY_SALT', 'DOMAIN_NAME');
+define('WP_CACHE_KEY_SALT', '10.11.100.166');
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */

@@ -1,0 +1,11 @@
+FROM alpine:3.14.2
+
+# Update System and Install Tools
+RUN apk update
+RUN apk add --update nodejs npm
+
+ADD ./tools/index.html .
+ADD ./tools/server.js .
+
+
+CMD node server.js
