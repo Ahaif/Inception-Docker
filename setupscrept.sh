@@ -123,14 +123,14 @@ then
   if ! [ -x "$(command -v docker)" ]
   then
     echo "${GREEN}Adding ${BLUE}Docker${GREEN}’s official ${BLUE}GPG key${RESET}"
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    sudo apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
     echo "${GREEN}setting up the stable repository${RESET}"
-    echo   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-      $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
     echo "${GREEN}Re-update The System${RESET}"
     sudo apt-get update -y
     echo "${GREEN}Installing ${BLUE}docker${RESET}"
-    sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+    sudo apt install docker-ce
     else
       echo "${BLUE}docker${RED} already Installed${RESET}"
     fi
@@ -152,7 +152,7 @@ then
   if ! [ -x "$(command -v docker-compose)" ]
   then
     echo "${GREEN}Downloading the current stable release of Docker Compose${RESET}"
-    sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo curl -L https://github.com/docker/compose/releases/download/1.25.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
     echo "${GREEN}Apply executable permissions to the binary${RESET}"
     sudo chmod +x /usr/local/bin/docker-compose
   else
