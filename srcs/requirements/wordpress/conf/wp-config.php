@@ -23,7 +23,7 @@ define('NONCE_SALT', 'abdel');
 define('WP_CACHE', true);
 
 define('WP_REDIS_HOST', 'redis');
-define('WP_CACHE_KEY_SALT', '10.11.100.166');
+define('WP_CACHE_KEY_SALT', '10.13.100.29');
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */

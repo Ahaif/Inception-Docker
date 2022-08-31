@@ -13,7 +13,7 @@ RUN wget https://wordpress.org/latest.tar.gz
 RUN tar xvf latest.tar.gz
 RUN rm latest.tar.gz
 
-# Download redis cache and unzip it
+# # Download redis cache and unzip it
 RUN wget https://downloads.wordpress.org/plugin/redis-cache.2.0.22.zip
 RUN unzip redis-cache.2.0.22.zip
 RUN rm -rf redis-cache.2.0.22.zip

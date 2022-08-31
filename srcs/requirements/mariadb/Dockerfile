@@ -11,6 +11,8 @@ RUN touch /run/openrc/softlevel
 # COPY Files to container
 COPY conf/wordpress.sql .
 
+
+
 # Copy installing script and make it executable
 ADD tools/run.sh .
 RUN chmod +x /run.sh

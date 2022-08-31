@@ -54,26 +54,28 @@ OpenRC is the init system used in alpine. The init system manages the services, 
 
 
 # maria db 
-mysql -u ahaifoul -pabdel
+mysql -u ahaifoul -p abdel
 
 show databases;
 use wordpress
 show tables;
 # modify data
 SELECT ID, user_login, user_pass FROM wp_users;
-UPDATE wp_users SET user_pass= "abdel" WHERE ID = 1;
+UPDATE wp_users SET user_pass= MD5("abdel") WHERE ID = 1;
 
 # check port connection
 SHOW GLOBAL VARIABLES LIKE 'PORT'
 
 # create new pswd encryption 
-echo -n "newpass" | md5sum
-e6053eb8d35e02ae40beeeacef203c1a
+echo -n abdel | md5sum 
+e6053eb8d35e02ae40beeeacef203c1a/
+INSERT INTO wordpress.wp_users 
+
 
 # connection 
-ftp://10.11.100.166/  ftp sever
-http://10.11.100.166:7777/   static website
+ftp://10.13.100.29/  ftp sever
+http://10.13.100.29:7777/   static website
 https://10.11.100.166:443/       wordpress website
 https://10.11.100.166:443/wp-admin       wordpress website database connection
 
-https://10.11.100.166:7077/adminer.php   check adminer interface
+http://10.13.100.29:7077/  check adminer interface
