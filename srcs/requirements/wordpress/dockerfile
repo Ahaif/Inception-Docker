@@ -22,7 +22,7 @@ RUN rm -rf redis-cache.2.0.22.zip
 ADD ./conf/object-cache.php /wordpress/wp-content/
 COPY conf/wp-config.php /wordpress/wp-config.php
 
-# start openrc
+# # start openrc
 RUN openrc
 RUN touch /run/openrc/softlevel
 

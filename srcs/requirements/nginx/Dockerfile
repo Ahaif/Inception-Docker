@@ -2,7 +2,7 @@ FROM  alpine:3.12.0
 
 # Update System and Install Tools
 RUN apk update
-RUN apk add nginx openrc vim openssl
+RUN apk add nginx vim openssl openrc
 
 # Create the root folder for nginx
 RUN mkdir -p /var/www/html/
@@ -14,7 +14,7 @@ RUN chown -R nginx:nginx /var/www/html
 # COPY Files to container
 COPY ./conf/nginx.conf /etc/nginx/
 
-# start openrc
+# # start openrc
 RUN openrc
 RUN touch /run/openrc/softlevel
 
