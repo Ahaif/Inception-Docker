@@ -1,131 +1,79 @@
-version: '3'
+
+secrets:
+  mysql_root_password:
+    file: ${SECRETS_DIR}/mysql_root_password
+  mysql_password:
+    file: ${SECRETS_DIR}/mysql_password
+  wp_admin_password:
+    file: ${SECRETS_DIR}/wp_admin_password
+
 services:
   mariadb:
-    build: requirements/mariadb
     image: mariadb
+    build: ./requirements/mariadb
     container_name: mariadb
+    restart: unless-stopped
+    secrets:
+      - mysql_root_password
+      - mysql_password
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
     volumes:
-      - db-data:/var/lib/mysql
-    restart: always
+      - db_data:/var/lib/mysql
     networks:
-      - myNetwork
-    env_file:
-      - .env
+      - inception_net
 
   wordpress:
-    build: requirements/wordpress/
     image: wordpress
-    volumes:
-      - www-data:/var/www/html/wordpress
+    build: ./requirements/wordpress
     container_name: wordpress
+    restart: unless-stopped
     depends_on:
       - mariadb
+    secrets:
+      - mysql_password
+      - wp_admin_password
+    environment:
+      - WORDPRESS_DB_HOST=mariadb
+      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - WP_ADMIN_USER=${WP_ADMIN_USER}
+      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
+    volumes:
+      - www_data:/var/www/html
     networks:
-      - myNetwork
-    restart: always
-    env_file:
-      - .env
+      - inception_net
 
   nginx:
-    build: requirements/nginx/
     image: nginx
+    build: ./requirements/nginx
     container_name: nginx
-    volumes:
-      - www-data:/var/www/html/wordpress
+    restart: unless-stopped
     ports:
-      - 443:443
+      - "443:443"
     depends_on:
       - wordpress
-    networks:
-      - myNetwork
-    restart: always
-    env_file:
-      - .env
-    
-  redis:
-    build: requirements/bonus/redis/
-    image: redis
-    container_name: redis
-    ports:
-      - 6379:6379
-    depends_on:
-      - nginx
-    networks:
-      - myNetwork
-    restart: always
-    env_file:
-      - .env
-  
-  ftps:
-    build: requirements/bonus/ftps/
-    image: ftps
-    container_name: ftps
     volumes:
-      - www-data:/home/ahaifoul
-    ports:
-      - "21:21"
-      - "21000:21000"
+      - www_data:/var/www/html:ro
     networks:
-      - myNetwork
-    restart: always
-    env_file:
-      - .env
-
-      
-  website:
-    container_name: website
-    build: requirements/bonus/website/
-    image: website
-    networks:
-      - myNetwork
-    ports:
-      - "7777:7777"
-    restart: always
-    env_file:
-      - .env
-  backup:
-    container_name: backup
-    build: requirements/bonus/backup/
-    image: backup
-    networks:
-      - myNetwork
-    depends_on:
-      - mariadb
-    volumes:
-      - db-data:/db-data
-      - backup-data:/backup
-    restart: always
-    env_file:
-      - .env
-  adminer:
-    build: requirements/bonus/adminer/
-    image: adminer
-    container_name: adminer
-    ports:
-      - 7077:7077
-    depends_on:
-      - nginx
-    networks:
-      - myNetwork
-    restart: always
+      - inception_net
 
 networks:
-  myNetwork:
+  inception_net:
     driver: bridge
 
 volumes:
-  db-data:
+  db_data:
+    driver: local
     driver_opts:
       type: none
-      device: /home/ahaifoul/data/db-data
       o: bind
-  www-data:
+      device: ${HOST_DATA}/db
+  www_data:
+    driver: local
     driver_opts:
       type: none
-      device: /home/ahaifoul/data/www-data
       o: bind
-  backup-data:
-    driver_opts:
-      type: none
-      device: /home/ahaifoul/data/backup-data
-      o: bind
+      device: ${HOST_DATA}/www

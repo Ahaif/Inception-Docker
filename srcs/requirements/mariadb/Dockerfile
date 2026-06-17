@@ -1,20 +1,21 @@
-FROM alpine:3.12.0
+FROM debian:bookworm
 
-# Update System and Install Tools
-RUN apk update
-RUN apk add mariadb mariadb-common mariadb-client openrc
+ENV DEBIAN_FRONTEND=noninteractive
 
-# start openrc
-RUN openrc
-RUN touch /run/openrc/softlevel
+# mariadb-server : the database engine
+# procps         : provides ps/kill, required by mysqld_safe to manage child processes
+# After install, Debian's post-install scripts run mariadb-install-db and populate
+# /var/lib/mysql inside the image layer. Docker copies that content into any empty
+# named volume on first container start — which would make our entrypoint's init
+# check always false. Wiping the directory here ensures the image layer is empty so
+# Docker has nothing to copy; our entrypoint owns all initialization.
+RUN apt-get update && apt-get install -y mariadb-server procps \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/mysql/*
 
-# COPY Files to container
-COPY conf/wordpress.sql .
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+EXPOSE 3306
 
-
-# Copy installing script and make it executable
-ADD tools/run.sh .
-RUN chmod +x /run.sh
-
-ENTRYPOINT [ "./run.sh" ]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

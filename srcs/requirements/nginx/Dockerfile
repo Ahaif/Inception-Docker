@@ -1,28 +1,21 @@
-FROM  alpine:3.12.0
+FROM debian:bookworm
 
-# Update System and Install Tools
-RUN apk update
-RUN apk add nginx vim openssl openrc
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Create the root folder for nginx
-RUN mkdir -p /var/www/html/
+RUN apt-get update && apt-get install -y nginx openssl \
+    && rm -rf /var/lib/apt/lists/*
 
-# change owner of The folder to nginx user
-RUN chown -R nginx:nginx /var/lib/nginx
-RUN chown -R nginx:nginx /var/www/html
+RUN mkdir -p /etc/nginx/ssl
 
-# COPY Files to container
-COPY ./conf/nginx.conf /etc/nginx/
+# Self-signed certificate for local/dev use.
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -subj "/C=US/ST=State/L=City/O=Org/CN=example.local" \
+    -keyout /etc/nginx/ssl/self.key \
+    -out    /etc/nginx/ssl/self.crt
 
-# # start openrc
-RUN openrc
-RUN touch /run/openrc/softlevel
+COPY default.conf /etc/nginx/sites-available/default
+RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-# Create folder
-RUN mkdir -p /run/nginx
+EXPOSE 443
 
-# Copy installing script and make it executable
-COPY tools/run.sh /
-RUN chmod +x ./run.sh
-
-ENTRYPOINT [ "./run.sh" ]
+CMD ["nginx", "-g", "daemon off;"]
